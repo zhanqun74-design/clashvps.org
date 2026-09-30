@@ -1,0 +1,14 @@
+# 私人资料，不要公开到 git
+本人AFF.txt
+机场信息汇总.txt
+keyword-map.md
+.agents/
+dontup/
+# 系统文件
+.DS_Store
+Thumbs.db
+node_modules/
+# 写文章用的模板，不上线
+article-template.html
+# 本地预览配置
+.claude/

@@ -1,0 +1,2 @@
+# Cloudflare 跳转规则：重复页面永久跳转到原文
+/2026-top4-airport-recommendation.html /2026-airport-recommendation.html 301
