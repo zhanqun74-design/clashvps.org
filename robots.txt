@@ -1,26 +1,34 @@
 # AI 爬虫策略：全面开放 (用户选择 B 策略)
 User-agent: OAI-SearchBot
 Allow: /
+Disallow: /go/
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /go/
 
 User-agent: Claude-SearchBot
 Allow: /
+Disallow: /go/
 
 User-agent: GPTBot
 Allow: /
+Disallow: /go/
 
 User-agent: ClaudeBot
 Allow: /
+Disallow: /go/
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /go/
 
 User-agent: CCBot
 Allow: /
+Disallow: /go/
 
 User-agent: *
 Allow: /
+Disallow: /go/
 
 Sitemap: https://www.clashvps.org/sitemap.xml
