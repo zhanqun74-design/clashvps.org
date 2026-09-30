@@ -1,0 +1,5 @@
+# 文本文件声明 UTF-8 编码，避免中文乱码
+/*.txt
+  Content-Type: text/plain; charset=utf-8
+/*.xml
+  Content-Type: application/xml; charset=utf-8
