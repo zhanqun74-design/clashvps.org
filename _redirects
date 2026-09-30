@@ -1,2 +1,4 @@
-# Cloudflare 跳转规则：重复页面永久跳转到原文
+# 首页：访问 / 时显示 index.html（html_handling 为 none 时需要）
+/ /index.html 200
+# 重复页面永久跳转到原文
 /2026-top4-airport-recommendation.html /2026-airport-recommendation.html 301

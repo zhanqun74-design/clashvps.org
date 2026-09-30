@@ -1,0 +1,12 @@
+// Cloudflare Workers 静态网站部署配置
+{
+  "name": "clashvps",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./",
+    // 保留原有的 .html 网址，不自动跳转到无后缀地址
+    "html_handling": "none",
+    // 找不到页面时显示 404.html，并返回 404 状态码
+    "not_found_handling": "404-page"
+  }
+}

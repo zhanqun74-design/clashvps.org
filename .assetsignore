@@ -1,0 +1,6 @@
+# 这些文件不作为网页上传
+.git
+.gitignore
+.assetsignore
+wrangler.jsonc
+node_modules
