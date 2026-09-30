@@ -1,6 +1,6 @@
 // Cloudflare Workers 静态网站部署配置
 {
-  "name": "clashvps",
+  "name": "clashvps-org",
   "compatibility_date": "2026-09-01",
   "assets": {
     "directory": "./",
