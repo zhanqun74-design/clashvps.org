@@ -1,0 +1,924 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订阅链接、节点、规则分流：Clash是怎么工作的？ | ClashVPS</title>
+    <meta name="description" content="订阅链接到底是什么？节点名称里的“倍率”“IPLC”是什么意思？Clash 的规则分流如何决定哪些网站直连、哪些走代理？本文从原理讲清 Clash 的工作方式，附三种模式区别和常见问题。">
+    <link rel="canonical" href="https://www.clashvps.org/clash-subscription-explained.html">
+    <meta name="author" content="ClashVPS">
+    <meta property="og:title" content="订阅链接、节点、规则分流：Clash是怎么工作的？ | ClashVPS">
+    <meta property="og:description" content="订阅链接到底是什么？节点名称里的“倍率”“IPLC”是什么意思？Clash 的规则分流如何决定哪些网站直连、哪些走代理？本文从原理讲清 Clash 的工作方式，附三种模式区别和常见问题。">
+    <meta property="og:image" content="https://www.clashvps.org/streaming_ai_support.png">
+    <meta property="og:url" content="https://www.clashvps.org/clash-subscription-explained.html">
+    <meta property="og:type" content="article">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "订阅链接、节点、规则分流：Clash 是怎么工作的？",
+  "description": "订阅链接到底是什么？节点名称里的“倍率”“IPLC”是什么意思？Clash 的规则分流如何决定哪些网站直连、哪些走代理？本文从原理讲清 Clash 的工作方式，附三种模式区别和常见问题。",
+  "image": "https://www.clashvps.org/streaming_ai_support.png",
+  "author": {
+    "@type": "Organization",
+    "name": "ClashVPS",
+    "url": "https://www.clashvps.org/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "ClashVPS",
+    "url": "https://www.clashvps.org/"
+  },
+  "datePublished": "2026-10-01T10:00:00+08:00",
+  "dateModified": "2026-10-01T10:00:00+08:00",
+  "mainEntityOfPage": "https://www.clashvps.org/clash-subscription-explained.html"
+}
+    </script>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "首页",
+      "item": "https://www.clashvps.org/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "知识科普",
+      "item": "https://www.clashvps.org/knowledge.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Clash 是怎么工作的",
+      "item": "https://www.clashvps.org/clash-subscription-explained.html"
+    }
+  ]
+}
+    </script>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "订阅链接是什么？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "订阅链接是一个网址，客户端访问它就能下载服务商提供的配置文件，里面包含节点列表和分流规则。客户端可以定期重新访问这个网址，自动获取最新的节点。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "订阅链接可以分享给别人吗？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "不建议。订阅链接里通常带有唯一的账号标识，别人拿到后可以直接使用你的套餐流量。怀疑泄露时，可以在服务商后台重置订阅链接。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Clash 的规则模式和全局模式有什么区别？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "规则模式会按规则判断每个请求，国内网站直连、海外网站走代理；全局模式让所有请求都走选中的节点，国内网站也会绕到国外，速度变慢且消耗流量，一般只在排查问题时临时使用。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "节点名称里的“倍率”是什么意思？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "倍率表示流量的扣费系数。例如 2 倍率节点，实际使用 1GB 流量会从套餐中扣除 2GB。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "为什么节点全部显示超时？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "常见原因是订阅没有更新（节点已经变更），或者电脑系统时间不准确。先手动更新订阅，再检查系统时间是否开启自动同步。"
+      }
+    }
+  ]
+}
+    </script>
+    <style>
+        :root {
+            --primary-color: #3b82f6; 
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --text-color: #334155;
+            --text-light: #64748b;
+            --border-color: #e2e8f0;
+            --card-bg: #ffffff;
+            --tag-bg: #eff6ff;
+            --max-width: 1400px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary-color: #60a5fa;
+                --primary-hover: #3b82f6;
+                --bg-color: #0f172a;
+                --text-color: #e2e8f0;
+                --text-light: #94a3b8;
+                --border-color: #334155;
+                --card-bg: #1e293b;
+                --tag-bg: #1e3a8a;
+            }
+            .cro-lead-card {
+                background: linear-gradient(135deg, #2e1065 0%, #1e1b4b 100%) !important;
+                border-color: #7e22ce !important;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+            }
+            .cro-lead-title { color: #fdf2f8 !important; }
+            .cro-lead-desc { color: #d8b4fe !important; }
+        }
+
+        /* 开启平滑滚动 */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.8;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .site-header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--primary-color);
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            margin-left: 2rem;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .container {
+            max-width: var(--max-width);
+            margin: 2rem auto 4rem;
+            padding: 0 1.5rem;
+        }
+
+        /* --------------------------
+           头部元数据 & 标签模块
+           -------------------------- */
+        .article-content {
+            background-color: var(--card-bg);
+            padding: clamp(1.5rem, 5vw, 3rem);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            font-size: 1.1rem;
+        }
+
+        .breadcrumb {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+        .breadcrumb a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        h1 {
+            font-size: clamp(1.8rem, 5vw, 2.4rem);
+            line-height: 1.3;
+            margin-bottom: 1.2rem;
+            color: var(--text-color);
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+        .tag-item {
+            background-color: var(--tag-bg);
+            color: var(--primary-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .article-meta {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* --------------------------
+           文章目录 TOC
+           -------------------------- */
+        .toc-box {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        .toc-title {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            color: var(--text-color);
+        }
+        .toc-box ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+        .toc-box li {
+            margin-bottom: 0.6rem;
+        }
+        .toc-box li.sub-level {
+            padding-left: 1.5rem;
+            font-size: 0.95rem;
+        }
+        .toc-box a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .toc-box a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+        /* --------------------------
+           内容排版
+           -------------------------- */
+        h2 {
+            font-size: 1.7rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            padding-top: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            padding-top: 1rem;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+        }
+
+        ul, ol {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.8rem;
+        }
+
+        strong {
+            color: var(--text-color);
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        /* --------------------------
+           科技感 CTA 按钮
+           -------------------------- */
+        .tech-cta-wrapper {
+            text-align: center;
+            margin: 3rem 0;
+        }
+        .tech-cta {
+            display: inline-block;
+            background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+            color: #ffffff !important;
+            padding: 1.2rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .tech-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4);
+            border: 2px solid #93c5fd;
+        }
+
+        /* --------------------------
+           FAQ & 相关阅读
+           -------------------------- */
+        .faq-box {
+            margin-top: 3rem;
+            background-color: var(--bg-color);
+            padding: 2rem;
+            border-radius: 12px;
+        }
+        .faq-item {
+            margin-bottom: 1.5rem;
+        }
+        .faq-q {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+        .faq-a {
+            color: var(--text-light);
+        }
+
+        .related-reads {
+            background-color: var(--bg-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        .related-reads h2 {
+            border: none;
+            margin-top: 0;
+            padding-top: 0;
+            font-size: 1.5rem;
+            color: var(--text-color);
+        }
+        .related-reads ul {
+            list-style: none;
+            padding: 0;
+        }
+        .related-reads li {
+            padding: 1rem 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .related-reads li:last-child {
+            border-bottom: none;
+        }
+        .related-reads a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            display: block;
+            transition: color 0.2s;
+        }
+        .related-reads a:hover {
+            color: var(--primary-color);
+        }
+
+        /* --------------------------
+           唯兔云高亮引流卡片 (CRO Lead Card)
+           -------------------------- */
+        .cro-lead-card {
+            background: linear-gradient(135deg, #fdf2f8 0%, #ffffff 100%);
+            border: 2px solid #fbcfe8;
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin: 3rem 0;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(244, 114, 182, 0.15);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        .cro-lead-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(244, 114, 182, 0.25);
+            border-color: #f472b6;
+        }
+        .cro-lead-card::before {
+            content: "✨";
+            position: absolute;
+            top: -15px;
+            right: -10px;
+            font-size: 5rem;
+            opacity: 0.1;
+        }
+        .cro-lead-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #4c1d95;
+            margin-bottom: 1rem;
+        }
+        .cro-lead-title span {
+            background: linear-gradient(135deg, #f472b6 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .cro-lead-desc {
+            color: #7e22ce;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+        .cro-lead-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f472b6 0%, #c084fc 100%);
+            color: #ffffff !important;
+            padding: 1.2rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 10px 20px rgba(192, 132, 252, 0.3);
+            border: 2px solid #ffffff;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .cro-lead-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(192, 132, 252, 0.4);
+        }
+        
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-light);
+            border-top: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+        }
+        .footer-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            margin: 0 0.5rem;
+        }
+
+        @media (max-width: 640px) {
+            .nav-links { display: none; }
+            .article-meta { flex-direction: column; gap: 0.5rem; }
+            .tech-cta { padding: 1rem 2rem; font-size: 1.1rem; }
+        }
+    </style>
+<style>
+        .article-layout {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+        .article-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .toc-sidebar {
+            width: 300px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 100px;
+        }
+        .toc-container {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+        .toc-container h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            color: #1e293b;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+        .toc-container ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .toc-container li {
+            margin-bottom: 0.8rem;
+        }
+        .toc-container li.toc-sub {
+            padding-left: 1.5rem;
+            font-size: 0.95em;
+            margin-bottom: 0.5rem;
+        }
+        .toc-container a {
+            color: #475569;
+            text-decoration: none;
+            transition: color 0.2s;
+            display: block;
+        }
+        .toc-container a:hover {
+            color: #3b82f6;
+        }
+        
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+        .pricing-table th, .pricing-table td {
+            border: 1px solid #e2e8f0;
+            padding: 1rem;
+            text-align: left;
+        }
+        .pricing-table th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        .pricing-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        
+        .related-reading {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 8px;
+        }
+        .related-reading h2 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .related-reading ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .related-reading li {
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .related-reading li::before {
+            content: "•";
+            color: var(--primary-color);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        @media (max-width: 768px) {
+            .article-layout {
+                flex-direction: column-reverse;
+            }
+            .toc-sidebar {
+                width: 100%;
+                position: static;
+                margin-bottom: 2rem;
+            }
+        }
+    </style>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+    <style>
+        .summary-box{background:var(--card-bg,#fff);border:1px solid var(--border-color,#e2e8f0);border-left:4px solid #3b82f6;border-radius:8px;padding:1rem 1.25rem;margin:1.5rem 0}
+        .summary-box ul{margin:.5rem 0 0 1.2rem}
+        .note{font-size:.92rem;color:var(--text-light,#64748b);background:rgba(245,158,11,.08);border-radius:6px;padding:.75rem 1rem;margin:1rem 0}
+        .pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+        .pc-grid>div{border:1px solid var(--border-color,#e2e8f0);border-radius:8px;padding:1rem}
+        .pricing-table tr.hl td{font-weight:600;background:rgba(59,130,246,.08)}
+        @media (max-width:640px){.pc-grid{grid-template-columns:1fr}.pricing-table{display:block;overflow-x:auto}}
+    </style>
+    <style>
+        .summary-box{background:var(--card-bg,#fff);border:1px solid var(--border-color,#e2e8f0);border-left:4px solid #3b82f6;border-radius:8px;padding:1rem 1.25rem;margin:1.5rem 0}
+        .summary-box ul{margin:.5rem 0 0 1.2rem}
+        .note{font-size:.92rem;color:var(--text-light,#64748b);background:rgba(245,158,11,.08);border-radius:6px;padding:.75rem 1rem;margin:1rem 0}
+        .pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+        .pc-grid>div{border:1px solid var(--border-color,#e2e8f0);border-radius:8px;padding:1rem}
+        .pricing-table tr.hl td{font-weight:600;background:rgba(59,130,246,.08)}
+        @media (max-width:640px){.pc-grid{grid-template-columns:1fr}.pricing-table{display:block;overflow-x:auto}}
+    </style>
+    <style>
+        .summary-box{background:var(--card-bg,#fff);border:1px solid var(--border-color,#e2e8f0);border-left:4px solid #3b82f6;border-radius:8px;padding:1rem 1.25rem;margin:1.5rem 0}
+        .summary-box ul{margin:.5rem 0 0 1.2rem}
+        .note{font-size:.92rem;color:var(--text-light,#64748b);background:rgba(245,158,11,.08);border-radius:6px;padding:.75rem 1rem;margin:1rem 0}
+        .pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+        .pc-grid>div{border:1px solid var(--border-color,#e2e8f0);border-radius:8px;padding:1rem}
+        .pricing-table tr.hl td{font-weight:600;background:rgba(59,130,246,.08)}
+        @media (max-width:640px){.pc-grid{grid-template-columns:1fr}.pricing-table{display:block;overflow-x:auto}}
+    </style>
+    <style>
+        .summary-box{background:var(--card-bg,#fff);border:1px solid var(--border-color,#e2e8f0);border-left:4px solid #3b82f6;border-radius:8px;padding:1rem 1.25rem;margin:1.5rem 0}
+        .summary-box ul{margin:.5rem 0 0 1.2rem}
+        .note{font-size:.92rem;color:var(--text-light,#64748b);background:rgba(245,158,11,.08);border-radius:6px;padding:.75rem 1rem;margin:1rem 0}
+        .pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+        .pc-grid>div{border:1px solid var(--border-color,#e2e8f0);border-radius:8px;padding:1rem}
+        .pricing-table tr.hl td{font-weight:600;background:rgba(59,130,246,.08)}
+        @media (max-width:640px){.pc-grid{grid-template-columns:1fr}.pricing-table{display:block;overflow-x:auto}}
+    </style>
+
+    <style id="nav-unified">
+        /* ===== 统一手机端导航 ===== */
+        .layout-container > * { min-width: 0; }  /* 防止宽表格把整页撑宽 */
+        @media (max-width: 900px) {
+            .layout-container { grid-template-columns: minmax(0, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .navbar, .site-header .nav-container {
+                flex-wrap: wrap; row-gap: 0.5rem; padding: 0.75rem 16px; height: auto;
+            }
+            .navbar .nav-brand, .site-header .logo { font-size: 1.25rem; white-space: nowrap; }
+            .navbar .nav-links, .site-header .nav-links {
+                display: flex; width: 100%; gap: 1.25rem; margin: 0; padding: 0 0 2px;
+                overflow-x: auto; white-space: nowrap; flex-wrap: nowrap;
+                scrollbar-width: none; -webkit-overflow-scrolling: touch;
+            }
+            .navbar .nav-links::-webkit-scrollbar, .site-header .nav-links::-webkit-scrollbar { display: none; }
+            .navbar .nav-links a, .site-header .nav-links a { flex: 0 0 auto; margin-left: 0; font-size: 0.95rem; }
+        }
+    </style>
+
+    <style id="toc-unified">
+        /* ===== 统一文章目录样式 ===== */
+        html { scroll-behavior: smooth; }
+        h2[id], h3[id] { scroll-margin-top: 90px; }
+        .layout-container { grid-template-columns: minmax(0, 1fr) 300px; }
+        aside.toc-sidebar {
+            width: 300px; flex-shrink: 0; position: sticky; top: 90px; display: block;
+            background: none; padding: 0; border: 0; box-shadow: none; border-radius: 0;
+        }
+        .toc {
+            background: var(--card-bg, #fff); border: 1px solid var(--border-color, #e2e8f0);
+            border-radius: 12px; padding: 1.25rem 1.25rem 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+            max-height: calc(100vh - 120px); overflow-y: auto;
+        }
+        .toc-title {
+            font-size: 1.05rem; font-weight: 700; color: var(--text-color, #1e293b);
+            padding-bottom: 0.6rem; margin-bottom: 0.6rem;
+            border-bottom: 1px solid var(--border-color, #e2e8f0);
+            list-style: none; cursor: default;
+        }
+        .toc-title::-webkit-details-marker { display: none; }
+        .toc-list { list-style: none; margin: 0; padding: 0; }
+        .toc-list li { margin: 0; padding: 0; }
+        .toc-list li::before { content: none; }
+        .toc-list a {
+            display: block; padding: 0.35rem 0 0.35rem 0.75rem; line-height: 1.45;
+            font-size: 0.93rem; color: var(--text-light, #64748b); text-decoration: none;
+            border-left: 2px solid transparent; border-bottom: 0;
+        }
+        .toc-list .toc-h3 a { padding-left: 1.6rem; font-size: 0.88rem; }
+        .toc-list a:hover { color: var(--primary-color, #3b82f6); border-left-color: var(--primary-color, #3b82f6); }
+        @media (max-width: 1024px) {
+            .article-layout, .layout-container { display: flex; flex-direction: column; }
+            .article-content, .main-content { width: 100%; }  /* 宽表格在框内横向滚动，不撑宽页面 */
+            aside.toc-sidebar { order: -1; width: 100%; position: static; display: block; margin-bottom: 1.5rem; }
+            .toc { max-height: none; }
+            .toc-title { cursor: pointer; margin-bottom: 0; padding-bottom: 0; border-bottom: 0; }
+            .toc-title::after { content: "展开 ▾"; float: right; font-size: 0.85rem; font-weight: 400; color: var(--text-light, #64748b); }
+            .toc[open] .toc-title { margin-bottom: 0.6rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border-color, #e2e8f0); }
+            .toc[open] .toc-title::after { content: "收起 ▴"; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <nav class="nav-container">
+            <a href="./index.html" class="logo">clash机场推荐</a>
+            <div class="nav-links">
+                <a href="./index.html">2026年机场推荐</a>
+                <a href="./category/jichang-tuijian.html">机场推荐</a>
+                <a href="./knowledge.html">知识科普</a>
+                <a href="./download.html">软件下载</a>
+                <a href="./about.html">关于我们</a>
+                <a href="./free-apple-id.html" style="color: #f59e0b; font-weight: bold;">免费Apple ID 🎁</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="article-layout">
+            <div class="article-content">
+            <nav class="breadcrumb">
+                <a href="./index.html">首页</a> &gt; <a href="./knowledge.html">知识科普</a> &gt; Clash 是怎么工作的
+            </nav>
+
+            <h1>订阅链接、节点、规则分流：Clash 是怎么工作的？</h1>
+
+            <div class="article-meta">
+                <span>作者：ClashVPS 编辑部</span>
+                <span>发布日期：2026年10月1日</span>
+            </div>
+
+            <div class="summary-box">
+                <strong>一分钟看懂</strong>
+                <ul>
+                    <li><strong>订阅链接：</strong>一个网址，客户端通过它下载服务商提供的配置文件，里面有节点列表和分流规则。</li>
+                    <li><strong>节点：</strong>一台可以帮你转发流量的服务器，包含地址、端口、协议和密码等信息。</li>
+                    <li><strong>策略组：</strong>把多个节点编成一组，可以手动选择，也可以按延迟自动选择。</li>
+                    <li><strong>规则分流：</strong>从上到下逐条匹配，决定每个请求是直连、走代理还是拦截。</li>
+                </ul>
+            </div>
+
+            <p>第一次用 Clash 的人，通常会被一堆陌生的词绕晕：订阅、节点、策略组、规则、TUN 模式……网上的教程大多只教“点哪里”，很少解释“为什么”。</p>
+            <p>这篇文章换个角度，<strong>不讲具体操作，只讲原理</strong>：Clash 拿到订阅之后做了什么、一个请求发出去时它是怎么决定走哪条路的。理解了这些，遇到问题时你就知道该从哪里查。</p>
+
+            <h2 id="part1">一、Clash 是什么</h2>
+            <p>Clash 是一个开源的<strong>规则代理工具</strong>的核心程序。它本身没有图形界面，我们平时用的 Clash Verge Rev、Clash Meta for Android 等，都是在这个核心外面套了一层界面的“客户端”。</p>
+            <p>原版 Clash 项目已经在 2023 年停止维护，目前社区主流使用的是在它基础上继续开发的 <strong>mihomo（原 Clash Meta）</strong>内核。它兼容原来的配置格式，同时支持更多新协议。下文说的“Clash”泛指这一类内核。</p>
+            <p>不管是哪个客户端，它们的工作原理都一样：<strong>读取一份配置文件 → 在本机开一个代理入口 → 按规则把每个网络请求分配给“直连”或某个节点</strong>。</p>
+
+            <h2 id="part2">二、订阅链接到底是什么</h2>
+            <p>订阅链接本质上就是<strong>一个网址</strong>。客户端访问这个网址，服务商的服务器会返回一份配置内容，客户端把它保存下来使用。之所以叫“订阅”，是因为客户端可以<strong>定期重新访问这个网址</strong>，自动获取最新的节点列表，就像订阅一份每天更新的报纸。</p>
+            <p>订阅返回的内容常见两种格式：</p>
+            <ul>
+                <li><strong>完整的 Clash 配置文件（YAML 格式）：</strong>包含节点、策略组和分流规则，导入后直接可用；</li>
+                <li><strong>节点列表：</strong>只有一行行的节点链接（常经过 Base64 编码），需要客户端或转换工具补上规则。</li>
+            </ul>
+            <p class="note">⚠️ 订阅链接里通常带有一串唯一的标识（token），相当于你的账号凭证。<strong>别人拿到你的订阅链接，就能直接用你的流量</strong>。所以不要把订阅链接发到群里或截图分享。如果怀疑泄露了，可以在服务商后台重置订阅。</p>
+
+            <h2 id="part3">三、节点：一台帮你转发流量的服务器</h2>
+            <p>每个节点都描述了一台服务器的连接方式，核心信息包括：</p>
+            <table class="pricing-table">
+                <thead><tr><th>字段</th><th>含义</th></tr></thead>
+                <tbody>
+                    <tr><td>服务器地址 / 端口</td><td>连接到哪台服务器的哪个端口</td></tr>
+                    <tr><td>协议类型</td><td>Shadowsocks、VMess、Trojan、VLESS、Hysteria 2 等，决定数据怎么加密和伪装</td></tr>
+                    <tr><td>密码 / UUID</td><td>身份验证信息</td></tr>
+                    <tr><td>传输方式</td><td>是否使用 WebSocket、gRPC、TLS 等进一步伪装</td></tr>
+                </tbody>
+            </table>
+            <p>节点的<strong>名称</strong>是服务商自己起的，通常会标出关键信息，读懂它们能帮你选对节点：</p>
+            <ul>
+                <li><strong>地区：</strong>如“香港”“日本”“美国”，决定你在网站看来身处哪个国家或地区；</li>
+                <li><strong>线路类型：</strong>如“IPLC”“IEPL”“中转”，代表跨境那一段走的是什么线路，晚高峰稳定性差异很大，原理见 <a href="./why-network-slow-at-night.html">为什么一到晚上 9 点网络就变慢</a>；</li>
+                <li><strong>倍率：</strong>如“×2”“2x”，表示用 1GB 流量会按 2GB 扣除。倍率越高，套餐流量消耗越快。</li>
+            </ul>
+
+            <h2 id="part4">四、策略组：把节点编成一组</h2>
+            <p>如果每个规则都直接指定某个节点，节点一换就要改一堆规则，非常麻烦。所以 Clash 引入了<strong>策略组（proxy-groups）</strong>：先把节点编成组，规则只需要指向组。常见的策略组类型：</p>
+            <table class="pricing-table">
+                <thead><tr><th>类型</th><th>怎么选节点</th><th>适合场景</th></tr></thead>
+                <tbody>
+                    <tr><td>select（手动选择）</td><td>你在界面上点哪个就用哪个</td><td>想自己决定用哪个地区</td></tr>
+                    <tr><td>url-test（自动测速）</td><td>定期测延迟，自动用最快的</td><td>省心，日常使用</td></tr>
+                    <tr><td>fallback（故障转移）</td><td>按顺序用第一个可用的，坏了自动换下一个</td><td>追求稳定不断线</td></tr>
+                    <tr><td>load-balance（负载均衡）</td><td>把请求分散到多个节点</td><td>多节点分摊流量</td></tr>
+                </tbody>
+            </table>
+            <p>你在客户端界面里看到的“节点选择”“自动选择”“流媒体”“国外网站”等分组，就是订阅配置里预先写好的策略组。</p>
+
+            <h2 id="part5">五、规则分流：每个请求走哪条路</h2>
+            <p>这是 Clash 最核心的能力。每当你访问一个网站，Clash 都会拿着这个请求的信息（域名、IP 等），<strong>从规则列表的第一条开始往下逐条比对，遇到第一条匹配的规则就停下</strong>，按这条规则的指示处理：</p>
+            <ul>
+                <li><strong>DIRECT：</strong>直接连接，不经过节点（通常用于国内网站）；</li>
+                <li><strong>某个策略组：</strong>交给这个组选出的节点转发；</li>
+                <li><strong>REJECT：</strong>直接拦截（常用于屏蔽广告域名）。</li>
+            </ul>
+            <p>常见的规则写法：</p>
+            <table class="pricing-table">
+                <thead><tr><th>规则类型</th><th>示例</th><th>含义</th></tr></thead>
+                <tbody>
+                    <tr><td>DOMAIN-SUFFIX</td><td><code>DOMAIN-SUFFIX,google.com,节点选择</code></td><td>google.com 及其所有子域名走“节点选择”组</td></tr>
+                    <tr><td>DOMAIN-KEYWORD</td><td><code>DOMAIN-KEYWORD,youtube,流媒体</code></td><td>域名中包含 youtube 的走“流媒体”组</td></tr>
+                    <tr><td>GEOIP</td><td><code>GEOIP,CN,DIRECT</code></td><td>IP 属于中国大陆的直接连接</td></tr>
+                    <tr><td>MATCH</td><td><code>MATCH,节点选择</code></td><td>以上都没匹配上的，统一走“节点选择”（兜底规则）</td></tr>
+                </tbody>
+            </table>
+            <p><strong>举个例子：</strong>你打开 YouTube，Clash 从上往下比对，遇到 <code>DOMAIN-KEYWORD,youtube,流媒体</code> 命中，于是交给“流媒体”组里的节点；你打开一个国内购物网站，它的 IP 匹配到 <code>GEOIP,CN,DIRECT</code>，于是直接连接，不消耗节点流量，速度也不受影响。</p>
+            <p class="note">因为是“遇到第一条就停”，规则的<strong>顺序很重要</strong>。写在前面的规则优先级更高，MATCH 必须放在最后。</p>
+
+            <h2 id="part6">六、三种模式和 TUN 模式</h2>
+            <table class="pricing-table">
+                <thead><tr><th>模式</th><th>工作方式</th><th>适合</th></tr></thead>
+                <tbody>
+                    <tr><td>规则模式（Rule）</td><td>按上面讲的规则分流</td><td>日常使用，推荐</td></tr>
+                    <tr><td>全局模式（Global）</td><td>所有请求都走选中的节点</td><td>临时排查问题；国内网站也会绕到国外，变慢且浪费流量</td></tr>
+                    <tr><td>直连模式（Direct）</td><td>所有请求都直连</td><td>临时关闭代理</td></tr>
+                </tbody>
+            </table>
+            <p>另外，“<strong>系统代理</strong>”和“<strong>TUN 模式</strong>”决定的是<strong>哪些程序的流量会交给 Clash</strong>：系统代理只对遵守系统代理设置的程序（如大部分浏览器）有效；TUN 模式在系统里创建一张虚拟网卡，能接管几乎所有程序的流量，包括不支持代理设置的软件和游戏。</p>
+
+            <h2 id="part7">七、为什么要定期“更新订阅”</h2>
+            <p>服务商会不定期调整节点：新增地区、更换服务器地址、下线故障节点。客户端里保存的只是上次下载的版本，不更新就会出现“节点全部超时”的情况。大部分客户端可以设置自动更新间隔，遇到大面积节点不可用时，<strong>先手动更新一次订阅</strong>往往就能解决。</p>
+            <p>理解了这些原理，具体的导入操作其实很简单：复制订阅链接、在客户端里添加、更新、选择节点。各个客户端的按钮位置不太一样，<a href="https://jichangnote.com/guides/how-to-import-subscription/" target="_blank" rel="noopener">机场笔记整理的《如何把订阅导入常见客户端》</a>按 Windows、macOS、iOS、Android 分别做了图文步骤，可以对照操作；客户端本身可以在本站的 <a href="./download.html">软件下载</a> 页面获取。</p>
+
+            <h2 id="part8">八、常见问题怎么从原理上排查</h2>
+            <ul>
+                <li><strong>更新订阅失败：</strong>客户端要能访问到订阅网址才能更新。如果订阅域名在当前网络打不开，可以尝试在客户端里开启“通过代理更新订阅”，或者换个网络环境再更新。</li>
+                <li><strong>所有节点都超时：</strong>先更新订阅；再检查电脑的系统时间是否准确。部分协议（如 VMess）要求设备时间与服务器基本一致，时间相差太多会导致连接失败。</li>
+                <li><strong>国内网站变慢：</strong>检查是不是开了全局模式，或者规则里缺少国内直连规则，导致国内流量也绕到了国外。</li>
+                <li><strong>某个网站打不开，其他正常：</strong>可能是它被规则分到了一个不合适的组，或者该网站限制了某些地区，换一个地区的节点试试。</li>
+            </ul>
+            <p>更多类似问题的排查方法，可以参考<a href="https://jichangnote.com/guides/airport-faq-100/" target="_blank" rel="noopener">机场笔记的《机场常见问题 100 问》</a>。</p>
+
+            <h2 id="part9">总结</h2>
+            <p>Clash 的工作流程可以概括为一句话：<strong>通过订阅拿到节点和规则 → 把节点编进策略组 → 每个请求按规则从上到下匹配，决定直连、走哪个组，还是拦截</strong>。订阅链接相当于账号凭证，要妥善保管；节点名称里的地区、线路和倍率决定了速度和流量消耗；规则的顺序决定了每个网站的去向。</p>
+
+            <h2 id="faq">常见问题 FAQ</h2>
+            <h3 id="faq-1">订阅链接是什么？</h3>
+            <p>订阅链接是一个网址，客户端访问它就能下载服务商提供的配置文件，里面包含节点列表和分流规则。客户端可以定期重新访问这个网址，自动获取最新的节点。</p>
+            <h3 id="faq-2">订阅链接可以分享给别人吗？</h3>
+            <p>不建议。订阅链接里通常带有唯一的账号标识，别人拿到后可以直接使用你的套餐流量。怀疑泄露时，可以在服务商后台重置订阅链接。</p>
+            <h3 id="faq-3">Clash 的规则模式和全局模式有什么区别？</h3>
+            <p>规则模式会按规则判断每个请求，国内网站直连、海外网站走代理；全局模式让所有请求都走选中的节点，国内网站也会绕到国外，速度变慢且消耗流量，一般只在排查问题时临时使用。</p>
+            <h3 id="faq-4">节点名称里的“倍率”是什么意思？</h3>
+            <p>倍率表示流量的扣费系数。例如 2 倍率节点，实际使用 1GB 流量会从套餐中扣除 2GB。</p>
+            <h3 id="faq-5">为什么节点全部显示超时？</h3>
+            <p>常见原因是订阅没有更新（节点已经变更），或者电脑系统时间不准确。先手动更新订阅，再检查系统时间是否开启自动同步。</p>
+
+            <p class="note">声明：本文为 ClashVPS 编辑部整理的网络知识科普，不含推广链接。文中数值为一般经验参考，实际情况因地区、运营商和时段而异。请遵守所在地法律法规使用网络服务。</p>
+
+            <div class="related-reading">
+                <h2 id="related">相关阅读</h2>
+                <ul>
+                    <li><a href="./why-network-slow-at-night.html">为什么一到晚上 9 点网络就变慢？</a></li>
+                    <li><a href="./network-speed-test-metrics.html">延迟、丢包、带宽、抖动：看懂测速报告的 5 个指标</a></li>
+                    <li><a href="./download.html">Clash / Shadowrocket 客户端下载</a></li>
+                    <li><a href="./knowledge.html">更多知识科普</a></li>
+                </ul>
+            </div>
+            </div>
+            <aside class="toc-sidebar">
+            <details class="toc" open>
+                <summary class="toc-title">目录</summary>
+                <ul class="toc-list">
+                <li class="toc-h2"><a href="#part1">一、Clash 是什么</a></li>
+                <li class="toc-h2"><a href="#part2">二、订阅链接到底是什么</a></li>
+                <li class="toc-h2"><a href="#part3">三、节点：一台帮你转发流量的服务器</a></li>
+                <li class="toc-h2"><a href="#part4">四、策略组：把节点编成一组</a></li>
+                <li class="toc-h2"><a href="#part5">五、规则分流：每个请求走哪条路</a></li>
+                <li class="toc-h2"><a href="#part6">六、三种模式和 TUN 模式</a></li>
+                <li class="toc-h2"><a href="#part7">七、为什么要定期“更新订阅”</a></li>
+                <li class="toc-h2"><a href="#part8">八、常见问题怎么从原理上排查</a></li>
+                <li class="toc-h2"><a href="#part9">总结</a></li>
+                <li class="toc-h2"><a href="#faq">常见问题 FAQ</a></li>
+                </ul>
+            </details>
+            <script>(function (d) { var m = matchMedia('(max-width: 1024px)'); function sync() { d.open = !m.matches; } sync(); m.addEventListener('change', sync); })(document.currentScript.previousElementSibling);</script>
+        </aside>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 ClashVPS. 保留所有权利。</p>
+        <div class="footer-links" style="margin-top: 1rem;">
+            <a href="./about.html">关于我们</a> |
+            <a href="./airports-wall.html">机场墙</a> |
+            <a href="./free-apple-id.html">免费Apple ID 🎁</a> |
+            <a href="./terms.html">服务条款</a> |
+            <a href="./privacy.html">隐私政策</a> |
+            <a href="./sitemap.xml">网站地图</a>
+        </div>
+    </footer>
+
+</body>
+</html>
