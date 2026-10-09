@@ -57,7 +57,7 @@
     </url>
     <url>
         <loc>https://www.clashvps.org/knowledge.html</loc>
-        <lastmod>2026-10-01</lastmod>
+        <lastmod>2026-10-09</lastmod>
         <priority>0.8</priority>
     </url>
     <url>
@@ -142,7 +142,7 @@
     </url>
     <url>
         <loc>https://www.clashvps.org/weifeng-review.html</loc>
-        <lastmod>2026-10-01</lastmod>
+        <lastmod>2026-10-09</lastmod>
         <priority>0.8</priority>
     </url>
     <url>
@@ -202,7 +202,7 @@
     </url>
     <url>
         <loc>https://www.clashvps.org/clash-subscription-explained.html</loc>
-        <lastmod>2026-10-01</lastmod>
+        <lastmod>2026-10-09</lastmod>
         <priority>0.5</priority>
     </url>
     <url>
@@ -218,6 +218,11 @@
     <url>
         <loc>https://www.clashvps.org/network-speed-test-metrics.html</loc>
         <lastmod>2026-10-01</lastmod>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://www.clashvps.org/airport-traffic-multiplier.html</loc>
+        <lastmod>2026-10-09</lastmod>
         <priority>0.5</priority>
     </url>
     <url>
