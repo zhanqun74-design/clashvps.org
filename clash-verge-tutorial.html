@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clash Verge Rev 使用教程：Windows/Mac 下载安装与导入订阅（2026） | ClashVPS</title>
+    <meta name="description" content="Clash Verge Rev 怎么用？本文按步骤讲清 Windows 和 macOS 下载哪个安装包、如何导入机场订阅、选择节点和规则模式、打开系统代理或 TUN 模式，并整理了打不开、只能开着 Clash 才能上网等常见问题的解决方法。">
+    <link rel="canonical" href="https://www.clashvps.org/clash-verge-tutorial.html">
+    <meta name="author" content="ClashVPS">
+    <meta property="og:title" content="Clash Verge Rev 使用教程：Windows/Mac 下载安装与导入订阅 | ClashVPS">
+    <meta property="og:description" content="Windows 和 macOS 下载哪个安装包、如何导入订阅、选节点、打开系统代理或 TUN 模式，以及常见问题的解决方法。">
+    <meta property="og:image" content="https://www.clashvps.org/streaming_ai_support.jpg">
+    <meta property="og:url" content="https://www.clashvps.org/clash-verge-tutorial.html">
+    <meta property="og:type" content="article">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Clash Verge Rev 使用教程：Windows/Mac 下载安装与导入订阅",
+  "description": "Clash Verge Rev 怎么用？本文按步骤讲清 Windows 和 macOS 下载哪个安装包、如何导入机场订阅、选择节点和规则模式、打开系统代理或 TUN 模式，并整理了常见问题的解决方法。",
+  "image": "https://www.clashvps.org/streaming_ai_support.jpg",
+  "author": {
+    "@type": "Organization",
+    "name": "ClashVPS",
+    "url": "https://www.clashvps.org/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "ClashVPS",
+    "url": "https://www.clashvps.org/"
+  },
+  "datePublished": "2026-10-22T10:00:00+08:00",
+  "dateModified": "2026-10-22T10:00:00+08:00",
+  "mainEntityOfPage": "https://www.clashvps.org/clash-verge-tutorial.html"
+}
+    </script>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "首页",
+      "item": "https://www.clashvps.org/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "知识科普",
+      "item": "https://www.clashvps.org/knowledge.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Clash Verge Rev 使用教程",
+      "item": "https://www.clashvps.org/clash-verge-tutorial.html"
+    }
+  ]
+}
+    </script>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Clash Verge Rev 是免费的吗？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "是的。Clash Verge Rev 是在 GitHub 上公开源代码的免费软件，本身不提供节点，需要导入机场或自建服务器的订阅链接才能使用。请只从官方 GitHub Releases 下载，不要使用来路不明的“破解版”“汉化版”。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Windows 应该下载哪个安装包？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "绝大多数电脑选文件名带 x64-setup.exe 的安装包。只有骁龙等 ARM 处理器的电脑才选 arm64。如果安装后打不开、只有托盘图标，可以换成文件名带 fixed_webview2 的版本。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "系统代理和 TUN 模式有什么区别？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "系统代理只对遵守系统代理设置的软件生效，例如浏览器，日常使用开它就够了。TUN 模式（虚拟网卡模式）会接管整台电脑的网络，适合游戏、命令行工具等不走系统代理的程序。Windows 上使用 TUN 需要先安装服务模式。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "为什么关掉 Clash 之后就上不了网？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "通常是 Clash 没有正常退出，系统代理设置残留了。Windows 打开“设置 → 网络和 Internet → 代理”，在“手动设置代理”里关闭“使用代理服务器”即可恢复。以后退出时请从托盘图标右键选择退出。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "导入订阅后节点全部超时怎么办？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "先在订阅页手动更新一次订阅，再检查电脑的系统时间是否准确、套餐是否到期或流量是否用完。如果仍然全部超时，可能是机场线路故障或订阅链接已重置，请到机场用户中心复制最新的订阅链接重新导入。"
+      }
+    }
+  ]
+}
+    </script>
+    <style>
+        :root {
+            --primary-color: #3b82f6; 
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --text-color: #334155;
+            --text-light: #64748b;
+            --border-color: #e2e8f0;
+            --card-bg: #ffffff;
+            --tag-bg: #eff6ff;
+            --max-width: 1400px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary-color: #60a5fa;
+                --primary-hover: #3b82f6;
+                --bg-color: #0f172a;
+                --text-color: #e2e8f0;
+                --text-light: #94a3b8;
+                --border-color: #334155;
+                --card-bg: #1e293b;
+                --tag-bg: #1e3a8a;
+            }
+            .cro-lead-card {
+                background: linear-gradient(135deg, #2e1065 0%, #1e1b4b 100%) !important;
+                border-color: #7e22ce !important;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+            }
+            .cro-lead-title { color: #fdf2f8 !important; }
+            .cro-lead-desc { color: #d8b4fe !important; }
+        }
+
+        /* 开启平滑滚动 */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.8;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .site-header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--primary-color);
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            margin-left: 2rem;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .container {
+            max-width: var(--max-width);
+            margin: 2rem auto 4rem;
+            padding: 0 1.5rem;
+        }
+
+        /* --------------------------
+           头部元数据 & 标签模块
+           -------------------------- */
+        .article-content {
+            background-color: var(--card-bg);
+            padding: clamp(1.5rem, 5vw, 3rem);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            font-size: 1.1rem;
+        }
+
+        .breadcrumb {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+        .breadcrumb a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        h1 {
+            font-size: clamp(1.8rem, 5vw, 2.4rem);
+            line-height: 1.3;
+            margin-bottom: 1.2rem;
+            color: var(--text-color);
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+        .tag-item {
+            background-color: var(--tag-bg);
+            color: var(--primary-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .article-meta {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* --------------------------
+           文章目录 TOC
+           -------------------------- */
+        .toc-box {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        .toc-title {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            color: var(--text-color);
+        }
+        .toc-box ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+        .toc-box li {
+            margin-bottom: 0.6rem;
+        }
+        .toc-box li.sub-level {
+            padding-left: 1.5rem;
+            font-size: 0.95rem;
+        }
+        .toc-box a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .toc-box a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+        /* --------------------------
+           内容排版
+           -------------------------- */
+        h2 {
+            font-size: 1.7rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            padding-top: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            padding-top: 1rem;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+        }
+
+        ul, ol {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.8rem;
+        }
+
+        strong {
+            color: var(--text-color);
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        /* --------------------------
+           科技感 CTA 按钮
+           -------------------------- */
+        .tech-cta-wrapper {
+            text-align: center;
+            margin: 3rem 0;
+        }
+        .tech-cta {
+            display: inline-block;
+            background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+            color: #ffffff !important;
+            padding: 1.2rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .tech-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4);
+            border: 2px solid #93c5fd;
+        }
+
+        /* --------------------------
+           FAQ & 相关阅读
+           -------------------------- */
+        .faq-box {
+            margin-top: 3rem;
+            background-color: var(--bg-color);
+            padding: 2rem;
+            border-radius: 12px;
+        }
+        .faq-item {
+            margin-bottom: 1.5rem;
+        }
+        .faq-q {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+        .faq-a {
+            color: var(--text-light);
+        }
+
+        .related-reads {
+            background-color: var(--bg-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        .related-reads h2 {
+            border: none;
+            margin-top: 0;
+            padding-top: 0;
+            font-size: 1.5rem;
+            color: var(--text-color);
+        }
+        .related-reads ul {
+            list-style: none;
+            padding: 0;
+        }
+        .related-reads li {
+            padding: 1rem 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .related-reads li:last-child {
+            border-bottom: none;
+        }
+        .related-reads a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            display: block;
+            transition: color 0.2s;
+        }
+        .related-reads a:hover {
+            color: var(--primary-color);
+        }
+
+        /* --------------------------
+           唯兔云高亮引流卡片 (CRO Lead Card)
+           -------------------------- */
+        .cro-lead-card {
+            background: linear-gradient(135deg, #fdf2f8 0%, #ffffff 100%);
+            border: 2px solid #fbcfe8;
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin: 3rem 0;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(244, 114, 182, 0.15);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        .cro-lead-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(244, 114, 182, 0.25);
+            border-color: #f472b6;
+        }
+        .cro-lead-card::before {
+            content: "✨";
+            position: absolute;
+            top: -15px;
+            right: -10px;
+            font-size: 5rem;
+            opacity: 0.1;
+        }
+        .cro-lead-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #4c1d95;
+            margin-bottom: 1rem;
+        }
+        .cro-lead-title span {
+            background: linear-gradient(135deg, #f472b6 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .cro-lead-desc {
+            color: #7e22ce;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+        .cro-lead-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f472b6 0%, #c084fc 100%);
+            color: #ffffff !important;
+            padding: 1.2rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 10px 20px rgba(192, 132, 252, 0.3);
+            border: 2px solid #ffffff;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .cro-lead-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(192, 132, 252, 0.4);
+        }
+        
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-light);
+            border-top: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+        }
+        .footer-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            margin: 0 0.5rem;
+        }
+
+        @media (max-width: 640px) {
+            .nav-links { display: none; }
+            .article-meta { flex-direction: column; gap: 0.5rem; }
+            .tech-cta { padding: 1rem 2rem; font-size: 1.1rem; }
+        }
+    </style>
+<style>
+        .article-layout {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+        .article-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .toc-sidebar {
+            width: 300px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 100px;
+        }
+        .toc-container {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+        .toc-container h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            color: #1e293b;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+        .toc-container ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .toc-container li {
+            margin-bottom: 0.8rem;
+        }
+        .toc-container li.toc-sub {
+            padding-left: 1.5rem;
+            font-size: 0.95em;
+            margin-bottom: 0.5rem;
+        }
+        .toc-container a {
+            color: #475569;
+            text-decoration: none;
+            transition: color 0.2s;
+            display: block;
+        }
+        .toc-container a:hover {
+            color: #3b82f6;
+        }
+        
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+        .pricing-table th, .pricing-table td {
+            border: 1px solid #e2e8f0;
+            padding: 1rem;
+            text-align: left;
+        }
+        .pricing-table th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        .pricing-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        
+        .related-reading {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 8px;
+        }
+        .related-reading h2 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .related-reading ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .related-reading li {
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .related-reading li::before {
+            content: "•";
+            color: var(--primary-color);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        @media (max-width: 768px) {
+            .article-layout {
+                flex-direction: column-reverse;
+            }
+            .toc-sidebar {
+                width: 100%;
+                position: static;
+                margin-bottom: 2rem;
+            }
+        }
+    </style>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+    <style>
+        .summary-box{background:var(--card-bg,#fff);border:1px solid var(--border-color,#e2e8f0);border-left:4px solid #3b82f6;border-radius:8px;padding:1rem 1.25rem;margin:1.5rem 0}
+        .summary-box ul{margin:.5rem 0 0 1.2rem}
+        .note{font-size:.92rem;color:var(--text-light,#64748b);background:rgba(245,158,11,.08);border-radius:6px;padding:.75rem 1rem;margin:1rem 0}
+        .pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+        .pc-grid>div{border:1px solid var(--border-color,#e2e8f0);border-radius:8px;padding:1rem}
+        .pricing-table tr.hl td{font-weight:600;background:rgba(59,130,246,.08)}
+        @media (max-width:640px){.pc-grid{grid-template-columns:1fr}.pricing-table{display:block;overflow-x:auto}}
+    </style>
+    <style>
+        .summary-box{background:var(--card-bg,#fff);border:1px solid var(--border-color,#e2e8f0);border-left:4px solid #3b82f6;border-radius:8px;padding:1rem 1.25rem;margin:1.5rem 0}
+        .summary-box ul{margin:.5rem 0 0 1.2rem}
+        .note{font-size:.92rem;color:var(--text-light,#64748b);background:rgba(245,158,11,.08);border-radius:6px;padding:.75rem 1rem;margin:1rem 0}
+        .pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+        .pc-grid>div{border:1px solid var(--border-color,#e2e8f0);border-radius:8px;padding:1rem}
+        .pricing-table tr.hl td{font-weight:600;background:rgba(59,130,246,.08)}
+        @media (max-width:640px){.pc-grid{grid-template-columns:1fr}.pricing-table{display:block;overflow-x:auto}}
+    </style>
+    <style>
+        .summary-box{background:var(--card-bg,#fff);border:1px solid var(--border-color,#e2e8f0);border-left:4px solid #3b82f6;border-radius:8px;padding:1rem 1.25rem;margin:1.5rem 0}
+        .summary-box ul{margin:.5rem 0 0 1.2rem}
+        .note{font-size:.92rem;color:var(--text-light,#64748b);background:rgba(245,158,11,.08);border-radius:6px;padding:.75rem 1rem;margin:1rem 0}
+        .pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+        .pc-grid>div{border:1px solid var(--border-color,#e2e8f0);border-radius:8px;padding:1rem}
+        .pricing-table tr.hl td{font-weight:600;background:rgba(59,130,246,.08)}
+        @media (max-width:640px){.pc-grid{grid-template-columns:1fr}.pricing-table{display:block;overflow-x:auto}}
+    </style>
+    <style>
+        .summary-box{background:var(--card-bg,#fff);border:1px solid var(--border-color,#e2e8f0);border-left:4px solid #3b82f6;border-radius:8px;padding:1rem 1.25rem;margin:1.5rem 0}
+        .summary-box ul{margin:.5rem 0 0 1.2rem}
+        .note{font-size:.92rem;color:var(--text-light,#64748b);background:rgba(245,158,11,.08);border-radius:6px;padding:.75rem 1rem;margin:1rem 0}
+        .pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+        .pc-grid>div{border:1px solid var(--border-color,#e2e8f0);border-radius:8px;padding:1rem}
+        .pricing-table tr.hl td{font-weight:600;background:rgba(59,130,246,.08)}
+        @media (max-width:640px){.pc-grid{grid-template-columns:1fr}.pricing-table{display:block;overflow-x:auto}}
+    </style>
+
+    <style id="nav-unified">
+        /* ===== 统一手机端导航 ===== */
+        .layout-container > * { min-width: 0; }  /* 防止宽表格把整页撑宽 */
+        @media (max-width: 900px) {
+            .layout-container { grid-template-columns: minmax(0, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .navbar, .site-header .nav-container {
+                flex-wrap: wrap; row-gap: 0.5rem; padding: 0.75rem 16px; height: auto;
+            }
+            .navbar .nav-brand, .site-header .logo { font-size: 1.25rem; white-space: nowrap; }
+            .navbar .nav-links, .site-header .nav-links {
+                display: flex; width: 100%; gap: 1.25rem; margin: 0; padding: 0 0 2px;
+                overflow-x: auto; white-space: nowrap; flex-wrap: nowrap;
+                scrollbar-width: none; -webkit-overflow-scrolling: touch;
+            }
+            .navbar .nav-links::-webkit-scrollbar, .site-header .nav-links::-webkit-scrollbar { display: none; }
+            .navbar .nav-links a, .site-header .nav-links a { flex: 0 0 auto; margin-left: 0; font-size: 0.95rem; }
+        }
+    </style>
+
+    <style id="toc-unified">
+        /* ===== 统一文章目录样式 ===== */
+        html { scroll-behavior: smooth; }
+        h2[id], h3[id] { scroll-margin-top: 90px; }
+        .layout-container { grid-template-columns: minmax(0, 1fr) 300px; }
+        aside.toc-sidebar {
+            width: 300px; flex-shrink: 0; position: sticky; top: 90px; display: block;
+            background: none; padding: 0; border: 0; box-shadow: none; border-radius: 0;
+        }
+        .toc {
+            background: var(--card-bg, #fff); border: 1px solid var(--border-color, #e2e8f0);
+            border-radius: 12px; padding: 1.25rem 1.25rem 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+            max-height: calc(100vh - 120px); overflow-y: auto;
+        }
+        .toc-title {
+            font-size: 1.05rem; font-weight: 700; color: var(--text-color, #1e293b);
+            padding-bottom: 0.6rem; margin-bottom: 0.6rem;
+            border-bottom: 1px solid var(--border-color, #e2e8f0);
+            list-style: none; cursor: default;
+        }
+        .toc-title::-webkit-details-marker { display: none; }
+        .toc-list { list-style: none; margin: 0; padding: 0; }
+        .toc-list li { margin: 0; padding: 0; }
+        .toc-list li::before { content: none; }
+        .toc-list a {
+            display: block; padding: 0.35rem 0 0.35rem 0.75rem; line-height: 1.45;
+            font-size: 0.93rem; color: var(--text-light, #64748b); text-decoration: none;
+            border-left: 2px solid transparent; border-bottom: 0;
+        }
+        .toc-list .toc-h3 a { padding-left: 1.6rem; font-size: 0.88rem; }
+        .toc-list a:hover { color: var(--primary-color, #3b82f6); border-left-color: var(--primary-color, #3b82f6); }
+        @media (max-width: 1024px) {
+            .article-layout, .layout-container { display: flex; flex-direction: column; }
+            .article-content, .main-content { width: 100%; }  /* 宽表格在框内横向滚动，不撑宽页面 */
+            aside.toc-sidebar { order: -1; width: 100%; position: static; display: block; margin-bottom: 1.5rem; }
+            .toc { max-height: none; }
+            .toc-title { cursor: pointer; margin-bottom: 0; padding-bottom: 0; border-bottom: 0; }
+            .toc-title::after { content: "展开 ▾"; float: right; font-size: 0.85rem; font-weight: 400; color: var(--text-light, #64748b); }
+            .toc[open] .toc-title { margin-bottom: 0.6rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border-color, #e2e8f0); }
+            .toc[open] .toc-title::after { content: "收起 ▴"; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <nav class="nav-container">
+            <a href="./index.html" class="logo">clash机场推荐</a>
+            <div class="nav-links">
+                <a href="./index.html">2026年机场推荐</a>
+                <a href="./category/jichang-tuijian.html">机场推荐</a>
+                <a href="./knowledge.html">知识科普</a>
+                <a href="./download.html">软件下载</a>
+                <a href="./about.html">关于我们</a>
+                <a href="./free-apple-id.html" style="color: #f59e0b; font-weight: bold;">免费Apple ID 🎁</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="article-layout">
+            <div class="article-content">
+            <nav class="breadcrumb">
+                <a href="./index.html">首页</a> &gt; <a href="./knowledge.html">知识科普</a> &gt; Clash Verge Rev 使用教程
+            </nav>
+
+            <h1>Clash Verge Rev 使用教程：Windows/Mac 下载安装与导入订阅</h1>
+
+            <div class="article-meta">
+                <span>作者：ClashVPS 编辑部</span>
+                <span>发布日期：2026年10月22日</span>
+                <span>适用版本：v2.5.x</span>
+            </div>
+
+            <div class="summary-box">
+                <strong>5 步用起来</strong>
+                <ul>
+                    <li><strong>下载：</strong>从官方 GitHub Releases 下载，Windows 选 <code>x64-setup.exe</code>，苹果 M 系列芯片选 <code>aarch64.dmg</code>，Intel Mac 选 <code>x64.dmg</code>。</li>
+                    <li><strong>导入订阅：</strong>复制机场的订阅链接，粘贴到「订阅」页，点「导入」。</li>
+                    <li><strong>选节点：</strong>在「代理」页选择<strong>规则</strong>模式，测一下延迟，选一个节点。</li>
+                    <li><strong>开代理：</strong>打开<strong>系统代理</strong>开关，浏览器就能访问海外网站了。</li>
+                    <li><strong>按需开 TUN：</strong>游戏、命令行等不走系统代理的程序，再开<strong>虚拟网卡模式（TUN）</strong>。</li>
+                </ul>
+            </div>
+
+            <p>Clash Verge Rev 是目前 Windows 和 macOS 上最常用的 Clash 客户端之一。它免费、开源，界面是中文，支持一键导入机场订阅。这篇教程从下载安装包开始，一步步讲到导入订阅、选节点、打开代理，最后整理了新手最常遇到的问题和解决方法。</p>
+            <p class="note">软件界面会随版本更新略有变化，本文按 2026 年 10 月的 v2.5.x 版本编写。如果你看到的按钮位置不完全一样，按名称找即可。</p>
+
+            <h2 id="part1">一、Clash Verge Rev 是什么</h2>
+            <p>Clash 本身是一个没有界面的“核心程序”，负责按规则转发网络流量。Clash Verge Rev 是在核心外面套了一层图形界面的<strong>客户端</strong>，内置的核心是 mihomo（也叫 Clash Meta）。早年流行的 Clash for Windows 已经停止更新，现在桌面端大多改用 Clash Verge Rev。</p>
+            <p>要注意的是：<strong>客户端只是“工具”，本身不带节点</strong>。你需要先有一个机场的订阅链接（或自建服务器），导入之后才能使用。订阅链接、节点、规则分流这些概念，可以先看 <a href="./clash-subscription-explained.html">Clash 是怎么工作的</a>，看完再操作会更顺手。</p>
+
+            <h2 id="part2">二、下载哪个安装包</h2>
+            <p>请只从官方渠道下载：<a href="https://github.com/clash-verge-rev/clash-verge-rev/releases" target="_blank" rel="nofollow noopener">Clash Verge Rev 官方 GitHub Releases</a>，或者本站的 <a href="./download.html">客户端下载页</a>（同样指向官方地址）。不要用来路不明的“破解版”“汉化版”，客户端能看到你的全部网络流量，来源不明的安装包风险很大。</p>
+            <p>进入 Releases 页面后，在最新版本的 Assets（附件）列表里，按你的电脑选择：</p>
+            <table class="pricing-table">
+                <thead><tr><th>你的电脑</th><th>选择的文件（文件名结尾）</th><th>说明</th></tr></thead>
+                <tbody>
+                    <tr><td>普通 Windows 电脑（Intel / AMD 处理器）</td><td><code>x64-setup.exe</code></td><td>绝大多数人选这个</td></tr>
+                    <tr><td>ARM 处理器的 Windows 电脑（如骁龙笔记本）</td><td><code>arm64-setup.exe</code></td><td>不确定就选 x64</td></tr>
+                    <tr><td>Windows 安装后打不开</td><td><code>x64_fixed_webview2-setup.exe</code></td><td>自带 WebView2 运行环境</td></tr>
+                    <tr><td>苹果 M1 / M2 / M3 / M4 芯片的 Mac</td><td><code>aarch64.dmg</code></td><td>2020 年底以后的大部分 Mac</td></tr>
+                    <tr><td>Intel 处理器的 Mac</td><td><code>x64.dmg</code></td><td>较老的 Mac</td></tr>
+                </tbody>
+            </table>
+            <p class="note">怎么看 Mac 是哪种芯片：点屏幕左上角苹果图标 →「关于本机」，“芯片”一栏写着 Apple M 开头的就是 M 系列，写着 Intel 的就是 Intel。截至 2026 年 10 月，最新版本是 v2.5.8，Windows 7 已不再支持。</p>
+
+            <h2 id="part3">三、Windows 安装步骤</h2>
+            <ol>
+                <li>双击下载好的 <code>setup.exe</code>，按提示点「下一步」完成安装。<strong>建议保持默认安装位置</strong>（<code>C:\Program Files\Clash Verge</code>），不要装到桌面或“下载”文件夹，否则后面开 TUN 模式时可能因为权限检查失败而用不了。</li>
+                <li>如果弹出 Windows 安全提示，点「更多信息 → 仍要运行」。</li>
+                <li>安装完成后打开 Clash Verge，主界面左侧是菜单栏，常用的是「代理」「订阅」「设置」几页。</li>
+            </ol>
+
+            <h2 id="part4">四、macOS 安装步骤</h2>
+            <ol>
+                <li>双击下载好的 <code>.dmg</code> 文件，把 Clash Verge 图标拖到「应用程序（Applications）」文件夹。</li>
+                <li>在「应用程序」里打开 Clash Verge。第一次打开如果提示“无法验证开发者”，到「系统设置 → 隐私与安全性」页面底部点「仍要打开」。</li>
+                <li>开启系统代理时，系统可能会要求输入电脑的开机密码，这是修改网络设置的正常授权。</li>
+            </ol>
+            <p class="note">如果提示“已损坏，无法打开”，官方说明通常是在旧版本还在运行时安装了新版本导致的。先在菜单栏图标里完全退出 Clash Verge，删除应用后重新安装即可。</p>
+
+            <h2 id="part5">五、导入机场订阅</h2>
+            <p>这一步是把机场提供的节点和规则装进客户端。</p>
+            <ol>
+                <li><strong>复制订阅链接：</strong>登录机场官网的用户中心，找到“订阅”或“一键订阅”，选择“复制订阅地址”（有的写作“Clash 订阅”）。订阅链接相当于账号凭证，<strong>不要发给别人</strong>。</li>
+                <li><strong>粘贴并导入：</strong>打开 Clash Verge 左侧的「订阅」页，把链接粘贴到顶部的输入框里，点「导入」。</li>
+                <li><strong>选中订阅：</strong>导入成功后，下方会出现一张订阅卡片，上面显示已用流量和到期时间。<strong>点一下这张卡片</strong>，让它处于选中（高亮）状态，配置才会生效。</li>
+            </ol>
+            <p>很多机场的用户中心还提供“一键导入到 Clash Verge”按钮，点击后浏览器会询问是否打开 Clash Verge，允许后会自动导入，效果和手动粘贴一样。</p>
+            <p>订阅卡片上显示的“已用流量”，是机场按节点倍率换算后的扣除量。不同节点扣流量的速度可能不一样，详见 <a href="./airport-traffic-multiplier.html">机场倍率是什么</a>。各种客户端导入订阅的通用方法，也可以参考<a href="https://jichangnote.com/guides/how-to-import-subscription/" target="_blank" rel="noopener">机场笔记的订阅导入教程</a>。</p>
+
+            <h2 id="part6">六、选择节点和代理模式</h2>
+            <p>打开左侧的「代理」页，顶部可以切换三种模式：</p>
+            <table class="pricing-table">
+                <thead><tr><th>模式</th><th>效果</th><th>建议</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>规则</strong></td><td>按订阅里的规则自动分流：国内网站直连，海外网站走节点</td><td><strong>日常使用选这个</strong></td></tr>
+                    <tr><td>全局</td><td>所有流量都走你选的节点</td><td>临时排查问题时用</td></tr>
+                    <tr><td>直连</td><td>所有流量都不走节点</td><td>相当于暂时关掉代理</td></tr>
+                </tbody>
+            </table>
+            <p>选好模式后，下方会列出机场的节点分组（策略组）。点分组旁边的<strong>测速（闪电）图标</strong>，可以一次测出所有节点的延迟，然后点击一个延迟较低的节点即可。很多机场还提供“自动选择”分组，会自动切换到延迟最低的节点，新手直接选它也可以。</p>
+            <p class="note">客户端里显示的延迟是“通过节点访问测试网址”的总耗时，包含握手时间，通常比 ping 值高，只适合在节点之间互相比较。想看懂这些数字，可以读 <a href="./network-speed-test-metrics.html">看懂测速报告的 5 个指标</a>。白天延迟正常、晚上变高，多半是晚高峰拥堵，原理见 <a href="./why-network-slow-at-night.html">为什么一到晚上 9 点网络就变慢</a>。</p>
+
+            <h2 id="part7">七、打开系统代理或 TUN 模式</h2>
+            <p>导入订阅、选好节点之后，还要“打开开关”，流量才会真正经过 Clash。有两种方式：</p>
+            <h3 id="part7-1">1. 系统代理（日常够用）</h3>
+            <p>在 Clash Verge 的首页或「设置」页，打开<strong>「系统代理」</strong>开关。它会自动修改电脑的代理设置，让浏览器等遵守系统代理的软件走 Clash。打开后访问一个海外网站，能正常打开就说明成功了。</p>
+            <h3 id="part7-2">2. 虚拟网卡模式 / TUN（接管所有程序）</h3>
+            <p>有些程序不理会系统代理，例如部分游戏、命令行工具、某些桌面应用。这时可以打开<strong>「虚拟网卡模式」</strong>（即 TUN 模式）：Clash 会创建一块虚拟网卡，接管整台电脑的网络流量。</p>
+            <ul>
+                <li><strong>Windows：</strong>开 TUN 之前，需要先在「设置」里安装<strong>服务模式</strong>（需要管理员权限）。部分安全软件可能会拦截服务安装，被拦截时需要在安全软件里放行。</li>
+                <li><strong>macOS：</strong>打开时按提示输入电脑密码授权即可。</li>
+            </ul>
+            <p class="note">TUN 模式会让系统更新、云盘同步等后台流量也经过 Clash。只要保持「规则」模式，国内流量依然直连、不扣机场流量；但如果切到「全局」，这些流量都会消耗套餐。</p>
+
+            <h2 id="part8">八、推荐的几项设置</h2>
+            <ul>
+                <li><strong>开机自启 / 静默启动：</strong>在「设置」里打开，开机后自动在后台运行，不弹窗口。</li>
+                <li><strong>自动更新订阅：</strong>在订阅卡片上右键 →「编辑信息」，设置更新间隔（例如每 24 小时）。机场更换节点后，客户端会自动同步。</li>
+                <li><strong>端口：</strong>Clash Verge Rev 默认的代理端口是 <code>7897</code>。如果某个软件需要手动填写代理，地址填 <code>127.0.0.1</code>，端口填 <code>7897</code>。</li>
+                <li><strong>正确退出：</strong>关闭窗口只是缩到托盘，并没有退出。需要完全退出时，在托盘（菜单栏）图标上右键选择「退出」，这样系统代理设置会被正常恢复。</li>
+            </ul>
+
+            <h2 id="part9">九、常见问题与解决方法</h2>
+            <table class="pricing-table">
+                <thead><tr><th>现象</th><th>常见原因</th><th>解决方法</th></tr></thead>
+                <tbody>
+                    <tr><td>安装时提示“此应用无法在你的电脑上运行”</td><td>下错了安装包架构</td><td>普通电脑改下 <code>x64</code> 版本</td></tr>
+                    <tr><td>Windows 上打不开，只有托盘图标或没有窗口</td><td>缺少 WebView2 运行环境</td><td>改下文件名带 <code>fixed_webview2</code> 的安装包</td></tr>
+                    <tr><td>关掉 Clash 后上不了网</td><td>没有正常退出，系统代理残留</td><td>Windows「设置 → 网络和 Internet → 代理」，关闭“使用代理服务器”</td></tr>
+                    <tr><td>「代理」页一片空白</td><td>核心程序通信失败</td><td>官方建议把 Windows 防火墙关闭再重新打开，然后重启 Clash Verge</td></tr>
+                    <tr><td>节点全部超时</td><td>订阅过期、流量用完、系统时间不准或机场故障</td><td>手动更新订阅，校准系统时间，到用户中心确认套餐状态</td></tr>
+                    <tr><td>开了 TUN 以后断网</td><td>多块虚拟网卡冲突</td><td>在系统网络设置里删除不用的虚拟网卡，或先关掉 TUN 只用系统代理</td></tr>
+                    <tr><td>Mac 上系统代理开关打不开</td><td>修改系统设置需要管理员授权</td><td>按提示输入电脑密码；或在「隐私与安全性 → 高级」里调整相关授权选项</td></tr>
+                    <tr><td>Mac 上 App Store 版 Telegram 不走代理</td><td>该版本不遵守系统代理</td><td>在 Telegram 设置里手动填代理 <code>127.0.0.1:7897</code>，或开启 TUN</td></tr>
+                </tbody>
+            </table>
+            <p>更多问题可以查看 <a href="https://www.clashverge.dev/faq/windows.html" target="_blank" rel="nofollow noopener">Clash Verge Rev 官方常见问题文档</a>。</p>
+
+            <h2 id="part10">总结</h2>
+            <p>Clash Verge Rev 的使用流程可以记成一句话：<strong>官方下载 → 导入订阅并选中 → 规则模式选节点 → 打开系统代理</strong>。日常上网用系统代理就够了，游戏和命令行工具再开 TUN。遇到问题时，先看是不是安装包选错、订阅没选中，或者没有正常退出导致代理残留，这三种情况占了新手问题的大多数。</p>
+
+            <h2 id="faq">常见问题 FAQ</h2>
+            <h3 id="faq-1">Clash Verge Rev 是免费的吗？</h3>
+            <p>是的。Clash Verge Rev 是在 GitHub 上公开源代码的免费软件，本身不提供节点，需要导入机场或自建服务器的订阅链接才能使用。请只从官方 GitHub Releases 下载，不要使用来路不明的“破解版”“汉化版”。</p>
+            <h3 id="faq-2">Windows 应该下载哪个安装包？</h3>
+            <p>绝大多数电脑选文件名带 x64-setup.exe 的安装包。只有骁龙等 ARM 处理器的电脑才选 arm64。如果安装后打不开、只有托盘图标，可以换成文件名带 fixed_webview2 的版本。</p>
+            <h3 id="faq-3">系统代理和 TUN 模式有什么区别？</h3>
+            <p>系统代理只对遵守系统代理设置的软件生效，例如浏览器，日常使用开它就够了。TUN 模式（虚拟网卡模式）会接管整台电脑的网络，适合游戏、命令行工具等不走系统代理的程序。Windows 上使用 TUN 需要先安装服务模式。</p>
+            <h3 id="faq-4">为什么关掉 Clash 之后就上不了网？</h3>
+            <p>通常是 Clash 没有正常退出，系统代理设置残留了。Windows 打开“设置 → 网络和 Internet → 代理”，在“手动设置代理”里关闭“使用代理服务器”即可恢复。以后退出时请从托盘图标右键选择退出。</p>
+            <h3 id="faq-5">导入订阅后节点全部超时怎么办？</h3>
+            <p>先在订阅页手动更新一次订阅，再检查电脑的系统时间是否准确、套餐是否到期或流量是否用完。如果仍然全部超时，可能是机场线路故障或订阅链接已重置，请到机场用户中心复制最新的订阅链接重新导入。</p>
+
+            <p class="note">声明：本文为 ClashVPS 编辑部整理的软件使用教程，不含推广链接。Clash Verge Rev 为第三方开源软件，界面与功能以官方最新版本为准。请遵守所在地法律法规使用网络服务。</p>
+
+            <div class="related-reading">
+                <h2 id="related">相关阅读</h2>
+                <ul>
+                    <li><a href="./clash-subscription-explained.html">订阅链接、节点、规则分流：Clash 是怎么工作的？</a></li>
+                    <li><a href="./airport-traffic-multiplier.html">机场倍率是什么？100GB 流量实际能用多少</a></li>
+                    <li><a href="./download.html">Clash / 科学上网客户端官方下载</a></li>
+                    <li><a href="./knowledge.html">更多知识科普</a></li>
+                </ul>
+            </div>
+            </div>
+            <aside class="toc-sidebar">
+            <details class="toc" open>
+                <summary class="toc-title">目录</summary>
+                <ul class="toc-list">
+                <li class="toc-h2"><a href="#part1">一、Clash Verge Rev 是什么</a></li>
+                <li class="toc-h2"><a href="#part2">二、下载哪个安装包</a></li>
+                <li class="toc-h2"><a href="#part3">三、Windows 安装步骤</a></li>
+                <li class="toc-h2"><a href="#part4">四、macOS 安装步骤</a></li>
+                <li class="toc-h2"><a href="#part5">五、导入机场订阅</a></li>
+                <li class="toc-h2"><a href="#part6">六、选择节点和代理模式</a></li>
+                <li class="toc-h2"><a href="#part7">七、打开系统代理或 TUN 模式</a></li>
+                <li class="toc-h2"><a href="#part8">八、推荐的几项设置</a></li>
+                <li class="toc-h2"><a href="#part9">九、常见问题与解决方法</a></li>
+                <li class="toc-h2"><a href="#part10">总结</a></li>
+                <li class="toc-h2"><a href="#faq">常见问题 FAQ</a></li>
+                </ul>
+            </details>
+            <script>(function (d) { var m = matchMedia('(max-width: 1024px)'); function sync() { d.open = !m.matches; } sync(); m.addEventListener('change', sync); })(document.currentScript.previousElementSibling);</script>
+        </aside>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 ClashVPS. 保留所有权利。</p>
+        <div class="footer-links" style="margin-top: 1rem;">
+            <a href="./about.html">关于我们</a> |
+            <a href="./airports-wall.html">机场墙</a> |
+            <a href="./free-apple-id.html">免费Apple ID 🎁</a> |
+            <a href="./terms.html">服务条款</a> |
+            <a href="./privacy.html">隐私政策</a> |
+            <a href="./sitemap.xml">网站地图</a>
+        </div>
+    </footer>
+
+</body>
+</html>

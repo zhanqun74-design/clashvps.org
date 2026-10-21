@@ -772,7 +772,7 @@
             <p>这篇文章换个角度，<strong>不讲具体操作，只讲原理</strong>：Clash 拿到订阅之后做了什么、一个请求发出去时它是怎么决定走哪条路的。理解了这些，遇到问题时你就知道该从哪里查。</p>
 
             <h2 id="part1">一、Clash 是什么</h2>
-            <p>Clash 是一个开源的<strong>规则代理工具</strong>的核心程序。它本身没有图形界面，我们平时用的 Clash Verge Rev、Clash Meta for Android 等，都是在这个核心外面套了一层界面的“客户端”。</p>
+            <p>Clash 是一个开源的<strong>规则代理工具</strong>的核心程序。它本身没有图形界面，我们平时用的 <a href="./clash-verge-tutorial.html">Clash Verge Rev</a>、Clash Meta for Android 等，都是在这个核心外面套了一层界面的“客户端”。</p>
             <p>原版 Clash 项目已经在 2023 年停止维护，目前社区主流使用的是在它基础上继续开发的 <strong>mihomo（原 Clash Meta）</strong>内核。它兼容原来的配置格式，同时支持更多新协议。下文说的“Clash”泛指这一类内核。</p>
             <p>不管是哪个客户端，它们的工作原理都一样：<strong>读取一份配置文件 → 在本机开一个代理入口 → 按规则把每个网络请求分配给“直连”或某个节点</strong>。</p>
 
